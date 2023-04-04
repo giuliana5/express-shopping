@@ -4,7 +4,7 @@ const request = require("supertest");
 const app = require("./app");
 let items = require("./fakeDb");
 
-let item = { name: "eggs", price: "4.00"};
+let item = { name: "eggs", price: 5.00};
 
 beforeEach(() => {
     items.push(item);
@@ -41,13 +41,29 @@ describe("POST /items", () => {
 
 describe("GET /items/:name", () => {
     test("Viewing a single item", async () => {
-        const res = await request(app).get("/items/eggs");
+        const res = await request(app).get(`/items/${item.name}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual({ item });
     });
     test("Responds w/ 404 if name is invalid", async () => {
         const res = await request(app).get("/items/bananas");
+
+        expect(res.statusCode).toBe(404);
+    });
+});
+
+describe("PATCH /items/:name", () => {
+    test("Editing an item", async () => {
+        updatedItem = { name: "Egg Whites", price: 5.00 };
+        const res = await request(app).patch(`/items/${item.name}`).send(updatedItem);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ updated: { item: updatedItem } });
+    });
+    test("Responds w/ 404 if name is invalid", async () => {
+        updatedItem = { name: "Egg Whites", price: 5.00 };
+        const res = await request(app).patch("/items/avocado").send(updatedItem);
 
         expect(res.statusCode).toBe(404);
     });
