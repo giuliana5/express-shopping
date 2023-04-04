@@ -4,7 +4,7 @@ const ExpressError = require("./expressError");
 const items = require("./fakeDb");
 
 router.get("/", (req, res) => {
-    res.json({ items });
+    return res.json({ items });
 });
 
 router.post("/", (req, res, next) => {
@@ -16,6 +16,7 @@ router.post("/", (req, res, next) => {
 
         return res.status(201).json({ added: { item: newItem } });
     } catch (e) {
+
         return next(e);
     };
 });
@@ -25,7 +26,29 @@ router.get("/:name", (req, res) => {
     if (item === undefined) {
         throw new ExpressError("Item not found", 404);
     }
+
     return res.json({ item });
+});
+
+router.patch("/:name", (req, res) => {
+    const item = items.find(i => i.name === req.params.name);
+    if (item === undefined) {
+        throw new ExpressError("Item not found", 404);
+    };
+    item.name = req.body.name;
+    item.price = req.body.price;
+
+    return res.json({ updated: { item } });
+});
+
+router.delete("/:name", (req, res) => {
+    const item = items.find(i => i.name === req.params.name);
+    if (item === undefined) {
+        throw new ExpressError("Item not found", 404);
+    };
+    items.splice(item, 1);
+    
+    return res.json({ message: "Deleted"});
 });
 
 module.exports = router;
