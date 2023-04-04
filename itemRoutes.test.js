@@ -68,3 +68,17 @@ describe("PATCH /items/:name", () => {
         expect(res.statusCode).toBe(404);
     });
 });
+
+describe("DELETE /items/:name", () => {
+    test("Deleting an item", async () => {
+        const res = await request(app).delete(`/items/${item.name}`);
+        
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ message: "Deleted" });
+    });
+    test("Responds w/ 404 if name is invalid", async () => {
+        const res = await request(app).delete("/items/pineapple");
+
+        expect(res.statusCode).toBe(404);
+    });
+});
