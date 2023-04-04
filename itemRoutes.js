@@ -42,11 +42,11 @@ router.patch("/:name", (req, res) => {
 });
 
 router.delete("/:name", (req, res) => {
-    const item = items.find(i => i.name === req.params.name);
-    if (item === undefined) {
+    const itemIndex = items.findIndex(item => item.name === req.params.name);
+    if (itemIndex === -1) {
         throw new ExpressError("Item not found", 404);
     };
-    items.splice(item, 1);
+    items.splice(itemIndex, 1);
     
     return res.json({ message: "Deleted"});
 });
