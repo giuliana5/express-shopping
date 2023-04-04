@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res, next) => {
     try {
-        if (!req.body.name) throw new ExpressError("Name and price are required.", 400);
+        if (!req.body.name || !req.body.price) throw new ExpressError("Name and price are required.", 400);
 
         const newItem = { name: req.body.name, price: req.body.price };
         items.push(newItem);
@@ -18,6 +18,14 @@ router.post("/", (req, res, next) => {
     } catch (e) {
         return next(e);
     };
+});
+
+router.get("/:name", (req, res) => {
+    const item = items.find(i => i.name === req.params.name);
+    if (item === undefined) {
+        throw new ExpressError("Item not found", 404);
+    }
+    return res.json({ item });
 });
 
 module.exports = router;
