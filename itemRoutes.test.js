@@ -31,4 +31,24 @@ describe("POST /items", () => {
         expect(res.statusCode).toBe(201);
         expect(res.body).toEqual({ added: { item: newItem }});
     });
-})
+    test("Responds w/ 400 if name or price is missing", async () => {
+        newItem = { name: "celery" };
+        const res = await request(app).post("/items").send(newItem);
+
+        expect(res.statusCode).toBe(400);
+    });
+});
+
+describe("GET /items/:name", () => {
+    test("Viewing a single item", async () => {
+        const res = await request(app).get("/items/eggs");
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ item });
+    });
+    test("Responds w/ 404 if name is invalid", async () => {
+        const res = await request(app).get("/items/bananas");
+
+        expect(res.statusCode).toBe(404);
+    });
+});
